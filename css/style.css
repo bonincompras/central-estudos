@@ -80,3 +80,24 @@ section p {
 h3 {
     margin-top: 25px;
 }
+
+#saved-links-container {
+  margin-top: 20px;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}
+
+.link-input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.link-input-row input {
+  flex: 1;
+  padding: 5px;
+}
+
+.link-item {
+  margin-bottom: 5px;
+}
