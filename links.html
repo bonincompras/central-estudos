@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Links Salvos</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h1 { margin-bottom: 20px; }
+    .link-input-row { display: flex; gap: 10px; margin-bottom: 5px; }
+    .link-input-row input { flex: 1; padding: 5px; }
+    .link-item { margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+    .link-item a { text-decoration: none; color: blue; }
+    .delete-btn { background: red; color: white; border: none; padding: 2px 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<h1>Gerenciar Links</h1>
+
+<div id="links-list"></div>
+
+<div id="input-area">
+  <div class="link-input-row">
+    <input type="text" placeholder="Descrição" class="link-desc">
+    <input type="url" placeholder="Link" class="link-url">
+  </div>
+</div>
+
+<script>
+const linksList = document.getElementById('links-list');
+const inputArea = document.getElementById('input-area');
+
+// Carrega links do localStorage
+function loadLinks() {
+  linksList.innerHTML = '';
+  const links = JSON.parse(localStorage.getItem('savedLinks') || '[]');
+  links.forEach((link, index) => {
+    const div = document.createElement('div');
+    div.className = 'link-item';
+    div.innerHTML = `
+      <a href="${link.url}" target="_blank">${link.desc}</a>
+      <button class="delete-btn" data-index="${index}">Excluir</button>
+    `;
+    linksList.appendChild(div);
+  });
+}
+
+// Salva links do input no localStorage
+function saveLinks() {
+  const rows = inputArea.querySelectorAll('.link-input-row');
+  const links = JSON.parse(localStorage.getItem('savedLinks') || '[]');
+
+  rows.forEach(row => {
+    const desc = row.querySelector('.link-desc').value.trim();
+    const url = row.querySelector('.link-url').value.trim();
+    if (desc && url) {
+      links.push({ desc, url });
+      row.querySelector('.link-desc').value = '';
+      row.querySelector('.link-url').value = '';
+    }
+  });
+
+  localStorage.setItem('savedLinks', JSON.stringify(links));
+  loadLinks();
+}
+
+// Cria nova linha de input automaticamente
+inputArea.addEventListener('input', (e) => {
+  if (!e.target.classList.contains('link-desc') && !e.target.classList.contains('link-url')) return;
+  const lastRow = inputArea.querySelector('.link-input-row:last-child');
+  const desc = lastRow.querySelector('.link-desc').value.trim();
+  const url = lastRow.querySelector('.link-url').value.trim();
+
+  if (desc || url) {
+    const newRow = lastRow.cloneNode(true);
+    newRow.querySelector('.link-desc').value = '';
+    newRow.querySelector('.link-url').value = '';
+    inputArea.appendChild(newRow);
+  }
+});
+
+// Excluir link
+linksList.addEventListener('click', (e) => {
+  if (!e.target.classList.contains('delete-btn')) return;
+  const index = e.target.dataset.index;
+  const links = JSON.parse(localStorage.getItem('savedLinks') || '[]');
+  links.splice(index, 1);
+  localStorage.setItem('savedLinks', JSON.stringify(links));
+  loadLinks();
+});
+
+// Inicializa
+loadLinks();
+</script>
+
+</body>
+</html>
