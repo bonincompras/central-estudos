@@ -2,15 +2,50 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Links Salvos</title>
+  <title>Gerenciar Links</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    h1 { margin-bottom: 20px; }
-    .link-input-row { display: flex; gap: 10px; margin-bottom: 5px; }
-    .link-input-row input { flex: 1; padding: 5px; }
-    .link-item { margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
-    .link-item a { text-decoration: none; color: blue; }
-    .delete-btn { background: red; color: white; border: none; padding: 2px 5px; cursor: pointer; }
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    h1 { margin-bottom: 20px; text-align: center; }
+    
+    .link-input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 5px;
+    }
+
+    .link-input-row input {
+      flex: 1;
+      padding: 5px;
+      font-size: 14px;
+    }
+
+    .link-item {
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .link-item a {
+      text-decoration: none;
+      color: #0077cc;
+      word-break: break-all;
+    }
+
+    .delete-btn {
+      background: red;
+      color: white;
+      border: none;
+      padding: 2px 6px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    #links-list {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -34,6 +69,7 @@ const inputArea = document.getElementById('input-area');
 function loadLinks() {
   linksList.innerHTML = '';
   const links = JSON.parse(localStorage.getItem('savedLinks') || '[]');
+
   links.forEach((link, index) => {
     const div = document.createElement('div');
     div.className = 'link-item';
@@ -45,7 +81,7 @@ function loadLinks() {
   });
 }
 
-// Salva links do input no localStorage
+// Salva um link no localStorage
 function saveLinks() {
   const rows = inputArea.querySelectorAll('.link-input-row');
   const links = JSON.parse(localStorage.getItem('savedLinks') || '[]');
@@ -64,14 +100,18 @@ function saveLinks() {
   loadLinks();
 }
 
-// Cria nova linha de input automaticamente
+// Cria nova linha de input automaticamente e salva link
 inputArea.addEventListener('input', (e) => {
   if (!e.target.classList.contains('link-desc') && !e.target.classList.contains('link-url')) return;
+
   const lastRow = inputArea.querySelector('.link-input-row:last-child');
   const desc = lastRow.querySelector('.link-desc').value.trim();
   const url = lastRow.querySelector('.link-url').value.trim();
 
-  if (desc || url) {
+  if (desc && url) {
+    saveLinks();
+
+    // Cria nova linha de input vazia
     const newRow = lastRow.cloneNode(true);
     newRow.querySelector('.link-desc').value = '';
     newRow.querySelector('.link-url').value = '';
@@ -79,7 +119,7 @@ inputArea.addEventListener('input', (e) => {
   }
 });
 
-// Excluir link
+// Excluir link individual
 linksList.addEventListener('click', (e) => {
   if (!e.target.classList.contains('delete-btn')) return;
   const index = e.target.dataset.index;
