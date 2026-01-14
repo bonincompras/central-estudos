@@ -67,3 +67,16 @@ section {
     margin-right: 10px;
     transform: scale(1.2);
 }
+
+.sidebar p {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+section p {
+    margin-top: 10px;
+}
+
+h3 {
+    margin-top: 25px;
+}
